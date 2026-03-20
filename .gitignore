@@ -1,0 +1,32 @@
+# virtual environment — never push this
+venv/
+
+# python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# environment variables — never push this, has your DB password
+.env
+
+# VS Code settings
+.vscode/
+
+# alembic compiled files
+*.pyc
+
+# pytest cache
+.pytest_cache/
+
+# egg info
+*.egg-info/
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# logs
+*.log
