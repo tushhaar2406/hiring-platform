@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from app.database import engine, Base
 from app import models
 from app.routers import jobs, auth
+from app.routers import jobs, auth, pipeline
 
 Base.metadata.create_all(bind=engine)
 
@@ -14,6 +15,7 @@ app = FastAPI(
 
 app.include_router(jobs.router)
 app.include_router(auth.router)
+app.include_router(pipeline.router)  
 
 @app.get("/")
 def root():

@@ -26,3 +26,14 @@ class User(Base):
     username        = Column(String(50),  unique=True, nullable=False)
     hashed_password = Column(String(200), nullable=False)
     created_at      = Column(DateTime,    default=func.now())
+
+class PipelineLog(Base):
+    __tablename__ = "pipeline_logs"
+
+    id            = Column(Integer, primary_key=True, index=True)
+    run_date      = Column(DateTime, default=func.now())
+    jobs_fetched  = Column(Integer, default=0)   # how many came from API
+    jobs_inserted = Column(Integer, default=0)   # how many were new
+    jobs_skipped  = Column(Integer, default=0)   # how many already existed
+    status        = Column(String(20), default="success")  # success or failed
+    error_message = Column(Text, nullable=True)  # if failed — why

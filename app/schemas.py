@@ -66,3 +66,18 @@ class LoginRequest(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type:   str    # always "bearer"
+
+
+# ─── Pipeline schemas ──────────────────────────────────────
+
+class PipelineLogResponse(BaseModel):
+    id:            int
+    run_date:      Optional[datetime] = None
+    jobs_fetched:  int
+    jobs_inserted: int
+    jobs_skipped:  int
+    status:        str
+    error_message: Optional[str] = None
+
+    class Config:
+        from_attributes = True
