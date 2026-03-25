@@ -1,9 +1,8 @@
 from fastapi import FastAPI
+from fastapi.security import OAuth2PasswordBearer
 from app.database import engine, Base
-
-# this line is critical — imports models so SQLAlchemy knows about them
 from app import models
-from app.routers import jobs
+from app.routers import jobs, auth
 
 Base.metadata.create_all(bind=engine)
 
@@ -13,9 +12,8 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# register the router — now all /jobs endpoints are active
 app.include_router(jobs.router)
-
+app.include_router(auth.router)
 
 @app.get("/")
 def root():

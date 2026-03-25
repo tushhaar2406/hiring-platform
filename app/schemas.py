@@ -40,3 +40,29 @@ class JobResponse(BaseModel):
 
     class Config:
         from_attributes = True  # allows SQLAlchemy model to convert to this schema
+
+
+
+# ─── User schemas ──────────────────────────────────────────
+
+class UserCreate(BaseModel):
+    email:    str
+    username: str
+    password: str         # plain password — we hash it before storing
+
+class UserResponse(BaseModel):
+    id:         int
+    email:      str
+    username:   str
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type:   str    # always "bearer"

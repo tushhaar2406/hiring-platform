@@ -4,6 +4,8 @@ from typing import List
 from app.database import get_db
 from app.models import Job
 from app.schemas import JobCreate, JobUpdate, JobResponse
+from app.dependencies import get_current_user
+from app.models import User
 
 router = APIRouter(
     prefix="/jobs",       # all routes here start with /jobs
@@ -12,7 +14,7 @@ router = APIRouter(
 
 # ─── CREATE a job ─────────────────────────────────────────
 @router.post("/", response_model=JobResponse, status_code=201)
-def create_job(job: JobCreate, db: Session = Depends(get_db)):
+def create_job(job: JobCreate, db: Session = Depends(get_db),current_user: User    = Depends(get_current_user)):
     # job is already validated by Pydantic — safe to use directly
     new_job = Job(**job.model_dump())  # convert schema to SQLAlchemy model
     db.add(new_job)                    # stage the new job
@@ -22,13 +24,16 @@ def create_job(job: JobCreate, db: Session = Depends(get_db)):
 
 # ─── GET all jobs ──────────────────────────────────────────
 @router.get("/", response_model=List[JobResponse])
-def get_all_jobs(db: Session = Depends(get_db)):
-    jobs = db.query(Job).all()         # SELECT * FROM jobs
+def get_all_jobs(
+    db:           Session = Depends(get_db),
+    current_user: User    = Depends(get_current_user)
+):
+    jobs = db.query(Job).all()
     return jobs
 
 # ─── GET one job by id ─────────────────────────────────────
 @router.get("/{job_id}", response_model=JobResponse)
-def get_one_job(job_id: int, db: Session = Depends(get_db)):
+def get_one_job(job_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     job = db.query(Job).filter(Job.id == job_id).first()  # SELECT * FROM jobs WHERE id = job_id
     if not job:
         raise HTTPException(
@@ -39,7 +44,7 @@ def get_one_job(job_id: int, db: Session = Depends(get_db)):
 
 # ─── UPDATE a job ──────────────────────────────────────────
 @router.put("/{job_id}", response_model=JobResponse)
-def update_job(job_id: int, updated: JobUpdate, db: Session = Depends(get_db)):
+def update_job(job_id: int, updated: JobUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     job = db.query(Job).filter(Job.id == job_id).first()
     if not job:
         raise HTTPException(
@@ -57,7 +62,7 @@ def update_job(job_id: int, updated: JobUpdate, db: Session = Depends(get_db)):
 
 # ─── DELETE a job ──────────────────────────────────────────
 @router.delete("/{job_id}", status_code=204)
-def delete_job(job_id: int, db: Session = Depends(get_db)):
+def delete_job(job_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     job = db.query(Job).filter(Job.id == job_id).first()
     if not job:
         raise HTTPException(
