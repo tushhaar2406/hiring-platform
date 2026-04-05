@@ -2,6 +2,8 @@ from sqlalchemy import Column, Integer, String, Text, Date, Float, DateTime
 from sqlalchemy.sql import func
 from app.database import Base
 import datetime
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
 
 class Job(Base):
     __tablename__ = "jobs"
@@ -37,3 +39,17 @@ class PipelineLog(Base):
     jobs_skipped  = Column(Integer, default=0)   # how many already existed
     status        = Column(String(20), default="success")  # success or failed
     error_message = Column(Text, nullable=True)  # if failed — why
+
+
+
+class Resume(Base):
+    __tablename__ = "resumes"
+
+    id               = Column(Integer, primary_key=True, index=True)
+    user_id          = Column(Integer, ForeignKey("users.id"), nullable=False)
+    resume_text      = Column(Text, nullable=False)      # raw resume content
+    extracted_skills = Column(Text, nullable=True)       # skills Claude finds
+    created_at       = Column(DateTime, default=func.now())
+
+    # relationship — links back to User
+    user = relationship("User", backref="resumes")

@@ -4,6 +4,7 @@ from app.database import engine, Base
 from app import models
 from app.routers import jobs, auth
 from app.routers import jobs, auth, pipeline,analytics  
+from app.routers import jobs, auth, pipeline, analytics, ai_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -17,6 +18,8 @@ app.include_router(jobs.router)
 app.include_router(auth.router)
 app.include_router(pipeline.router)  
 app.include_router(analytics.router) 
+app.include_router(ai_router.router)       
+
 
 @app.get("/")
 def root():

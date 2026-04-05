@@ -1,6 +1,9 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import date, datetime
+from typing import Optional, List
+
+# ─── Job schemas ───────────────────────────────────────────
 
 # what user sends when CREATING a job — all required fields
 class JobCreate(BaseModel):
@@ -81,3 +84,23 @@ class PipelineLogResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+# ─── Resume schemas ────────────────────────────────────────
+
+class ResumeSubmit(BaseModel):
+    resume_text: str              # user pastes their resume here
+
+class JobMatch(BaseModel):
+    job_id:         int
+    title:          str
+    company:        str
+    location:       Optional[str] = None
+    match_score:    float         # 0 to 100
+    matching_skills: List[str]    # skills user has that match
+    missing_skills:  List[str]    # skills user lacks
+
+class ResumeMatchResponse(BaseModel):
+    resume_summary:   str         # Claude's summary of the resume
+    extracted_skills: List[str]   # all skills Claude found in resume
+    top_matches:      List[JobMatch]  # top 5 matching jobs
+    overall_advice:   str         # Claude's career advice
